@@ -32,9 +32,9 @@
 		<dependency>
 			<groupId>org.opencv</groupId>
 			<artifactId>opencv</artifactId>
-			<version>4.5.1</version>
+			<version>4.9.0</version>
 			<scope>system</scope>
-			<systemPath>D:\opencv\build\java\opencv-451.jar</systemPath>
+			<systemPath>${project.basedir}/libs/opencv-490.jar</systemPath>
 		</dependency>
 	</dependencies>
 
