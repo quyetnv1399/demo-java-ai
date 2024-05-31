@@ -3,6 +3,9 @@ package com.example.spring_demo_ai.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.spring_demo_ai.services.ImageService;
+import com.example.spring_demo_ai.utils.ImageUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,15 +15,22 @@ import java.util.Random;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.highgui.HighGui;
+
 import org.opencv.imgcodecs.Imgcodecs;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
 @RestController
+@RequestMapping("/api")
 public class ImageController {
+
+    @Autowired
+    private ImageService imageService;
 
     @PostMapping("/analyze-image")
     public ResponseEntity<byte[]> analyzeImage(@RequestParam("file") MultipartFile file) {
@@ -49,7 +59,7 @@ public class ImageController {
 
             // Generate random file name
             String outputDirectory = "images/output/";
-            String outputFileName = generateRandomFileName() + ".jpg";
+            String outputFileName = ImageUtils.generateRandomFileName(5) + ".jpg";
             String outputPath = outputDirectory + outputFileName;
 
             // Export decoded image to file
@@ -62,16 +72,26 @@ public class ImageController {
 
     }
 
-    private String generateRandomFileName() {
-        int length = 10;
-        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            int index = random.nextInt(characters.length());
-            sb.append(characters.charAt(index));
+    @PostMapping("/detect-face")
+    public ResponseEntity<String> detectFace(@RequestParam("file") MultipartFile file) {
+        try {
+            // Convert MultipartFile to Mat
+            Path tempFile = Files.createTempFile(null, null);
+            Files.write(tempFile, file.getBytes());
+            Mat image = Imgcodecs.imread(tempFile.toString());
+            Files.delete(tempFile);
+
+            if (image.empty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hình ảnh không hợp lệ");
+            }
+
+            // Xử lý logic
+            imageService.detectFace(image);
+
+            return ResponseEntity.ok().body("Phân tích khuôn mặt thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi không thể phân tích hình ảnh");
         }
-        return sb.toString();
     }
 
 }

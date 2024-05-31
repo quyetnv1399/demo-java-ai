@@ -1,7 +1,5 @@
 package com.example.spring_demo_ai;
 
-import java.util.Random;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -13,7 +11,7 @@ import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
-import org.opencv.objdetect.Objdetect;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -24,10 +22,10 @@ public class SpringDemoAiApplication {
         // Load the OpenCV library
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         // imageDecode();
-        imageFace();
+        // detectFace();
         // testCvtColor();
 
-        // SpringApplication.run(SpringDemoAiApplication.class, args);
+        SpringApplication.run(SpringDemoAiApplication.class, args);
 
     }
 
@@ -94,7 +92,7 @@ public class SpringDemoAiApplication {
         HighGui.waitKey();
     }
 
-    public static void imageFace() {
+    public static void detectFace() {
         // Đường dẫn đến file ảnh
         String imagePath = "images/face-image.jpg";
         // Đọc file ảnh vào một đối tượng Mat
@@ -147,22 +145,5 @@ public class SpringDemoAiApplication {
         HighGui.waitKey(0);
         System.exit(0);
         
-        // String outputDirectory = "images/output/";
-        // String outputFileName = generateRandomFileName() + ".jpg";
-        // String outputPath = outputDirectory + outputFileName;
-        // Imgcodecs.imwrite(outputPath, image);
-        // System.out.println("Write Success" + faceArray.length);
-    }
-
-    private static String generateRandomFileName() {
-        int length = 10;
-        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            int index = random.nextInt(characters.length());
-            sb.append(characters.charAt(index));
-        }
-        return sb.toString();
     }
 }
