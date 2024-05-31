@@ -12,6 +12,13 @@ import org.opencv.utils.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -77,7 +84,5 @@ public class SpringDemoAiApplication {
         HighGui.waitKey();
 
 		// SpringApplication.run(SpringDemoAiApplication.class, args);
-
 	}
-
 }
