@@ -36,17 +36,19 @@
 			<artifactId>opencv</artifactId>
 			<version>4.9.0</version>
 			<scope>system</scope>
-			<systemPath>C:\Users\Admin\OneDrive\Documents\demo-java-ai\opencv\build\java\opencv-490.jar</systemPath>
+			<systemPath>C:\Users\Admin\Downloads\opencv\build\java\opencv-490.jar</systemPath>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
