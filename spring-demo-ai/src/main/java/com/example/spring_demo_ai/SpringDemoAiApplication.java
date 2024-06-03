@@ -26,11 +26,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SpringDemoAiApplication {
 	public static void main(String[] args) {
-		// // Load the OpenCV library
+		// Load the OpenCV library
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		String modelWeights = "spring-demo-ai/weights/facedetection/yolov8n.onnx"; 
+		String modelWeights = "weights/facedetection/yolov8n.onnx"; 
 		Net net = Dnn.readNetFromONNX(modelWeights); 
-        String imgPath = "spring-demo-ai/images/yolo.png";
+        String imgPath = "images/yolo.png";
 		Mat img = Imgcodecs.imread(imgPath);
 		if (img.empty()) {
             System.out.println("Can not read img.");
@@ -83,6 +83,6 @@ public class SpringDemoAiApplication {
 		HighGui.resizeWindow("img", 600, 600);
         HighGui.waitKey();
 
-		// SpringApplication.run(SpringDemoAiApplication.class, args);
+		SpringApplication.run(SpringDemoAiApplication.class, args);
 	}
 }
