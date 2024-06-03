@@ -94,5 +94,27 @@ public class ImageController {
         }
     }
 
+    @PostMapping("/detect-face2")
+    public ResponseEntity<String> detectFace2(@RequestParam("file") MultipartFile file) {
+        try {
+            // Convert MultipartFile to Mat
+            Path tempFile = Files.createTempFile(null, null);
+            Files.write(tempFile, file.getBytes());
+            Mat image = Imgcodecs.imread(tempFile.toString());
+            Files.delete(tempFile);
+
+            if (image.empty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hình ảnh không hợp lệ");
+            }
+
+            // Xử lý logic
+            imageService.detectFace2(image);
+
+            return ResponseEntity.ok().body("Phân tích khuôn mặt thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi không thể phân tích hình ảnh");
+        }
+    }
+
 }
 
