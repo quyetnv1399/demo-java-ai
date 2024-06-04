@@ -1,5 +1,6 @@
 package com.example.spring_demo_ai.services;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.opencv.core.Core;
@@ -18,12 +19,69 @@ import org.opencv.dnn.Net;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.spring_demo_ai.models.Image;
+import com.example.spring_demo_ai.repositories.ImageRepository;
 import com.example.spring_demo_ai.utils.ImageUtils;
+
+import io.minio.GetObjectArgs;
+import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.http.Method;
 
 @Service
 public class ImageService {
+
+    @Autowired
+    private MinioClient minioClient;
+
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Value("${minio.bucket-name}")
+    private String bucketName;
+
+    public ImageService(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
+    }
+
+    public byte[] getImage(String id) throws Exception {
+        Image image = imageRepository.findById(id).orElseThrow(() -> new RuntimeException("Image not found"));
+
+        InputStream stream = minioClient.getObject(
+                GetObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(image.getName())
+                        .build());
+        return stream.readAllBytes();
+    }
+
+    public Image saveImage(MultipartFile file) throws Exception {
+        String objectName = file.getOriginalFilename();
+        InputStream inputStream = file.getInputStream();
+
+        minioClient.putObject(
+                PutObjectArgs.builder().bucket(bucketName).object(objectName).stream(
+                        inputStream, file.getSize(), -1)
+                        .contentType(file.getContentType())
+                        .build());
+
+        String url = minioClient.getPresignedObjectUrl(
+                GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(bucketName).object(objectName).build());
+
+        Image image = new Image();
+        image.setName(objectName);
+        image.setType(file.getContentType());
+        image.setMinioUrl(url);
+
+        return imageRepository.save(image);
+    }
+
     public void detectFace(Mat image) {
         // Chuyển đổi hình ảnh sang xám
         Mat grayFrame = new Mat();
@@ -112,9 +170,9 @@ public class ImageService {
             String outputDirectory = "images/output/";
             String outputFileName = ImageUtils.generateRandomFileName(10) + ".jpg";
             String outputPath = outputDirectory + outputFileName;
-    
+
             Imgcodecs.imwrite(outputPath, image);
-            
+
         } catch (Exception e) {
             System.out.println("No person in image");
         }

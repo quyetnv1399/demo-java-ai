@@ -37,7 +37,6 @@ public class ProductController {
 
     @PutMapping("/product/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable String id, @RequestBody Product input) {
-        input.setId(id);
         Product updatedProduct = productService.updateProduct(id, input);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }

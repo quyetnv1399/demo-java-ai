@@ -3,6 +3,8 @@ package com.example.spring_demo_ai.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.spring_demo_ai.dto.ImageDto;
+import com.example.spring_demo_ai.models.Image;
 import com.example.spring_demo_ai.services.ImageService;
 import com.example.spring_demo_ai.utils.ImageUtils;
 
@@ -11,7 +13,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -19,11 +23,14 @@ import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api")
@@ -31,6 +38,28 @@ public class ImageController {
 
     @Autowired
     private ImageService imageService;
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String id) {
+        try {
+            byte[] imageData = imageService.getImage(id);
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(404).build();
+        }
+    }
+
+    @PostMapping("/image/upload")
+    public ResponseEntity<Image> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            Image image = imageService.saveImage(file);
+            return ResponseEntity.ok(image);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 
     @PostMapping("/analyze-image")
     public ResponseEntity<byte[]> analyzeImage(@RequestParam("file") MultipartFile file) {
@@ -117,4 +146,3 @@ public class ImageController {
     }
 
 }
-
