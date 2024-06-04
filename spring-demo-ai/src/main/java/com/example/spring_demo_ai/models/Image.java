@@ -19,16 +19,21 @@ public class Image {
 
     private String name;
     private String type;
+
+    @Column(name = "minioUrl", length = 1000)
     private String minioUrl;
+    @Column(name = "embedVector", length = 1000)
+    private String embedVector; 
 
     public Image(){
 
     }
 
-    public Image(String name, String type, String minioUrl) {
+    public Image(String name, String type, String minioUrl, String embedVector) {
         this.name = name;
         this.type = type;
         this.minioUrl = minioUrl;
+        this.embedVector = embedVector;
     }
 
     public String getId() {
@@ -58,5 +63,14 @@ public class Image {
     public void setMinioUrl(String minioUrl) {
         this.minioUrl = minioUrl;
     }
+
+    public String getEmbedVector() {
+        return embedVector;
+    }
+
+    public void setEmbedVector(String embedVector) {
+        this.embedVector = embedVector;
+    }
+    
 
 }
