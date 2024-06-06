@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.*;
 import java.util.*;
+import java.text.DecimalFormat;
 
 // @RestController
 public class FaceListService {
@@ -43,6 +44,7 @@ public class FaceListService {
                 for(List<Double> feature:listFeature) {
                     tmp += feature.get(i);
                 }
+
                 avgFeature.add(tmp/listFeature.size());
             }
 
@@ -57,11 +59,12 @@ public class FaceListService {
         ObjectNode jsonNode = objectMapper.createObjectNode();
 
         for(String name:featureMap.keySet()) {
-            Double[] featureMat = new Double[128];
+            Double[] featureArray = new Double[128];
             for(int i = 0; i < 128; i++) {
-                featureMat[i] = featureMap.get(name).row(0).get(0, i)[0];
+                DecimalFormat decimalFormat = new DecimalFormat("#.#######");
+                featureArray[i] = Double.parseDouble(decimalFormat.format(featureMap.get(name).row(0).get(0, i)[0]));
             }
-            jsonNode.put(name, Arrays.toString(featureMat));
+            jsonNode.put(name, Arrays.toString(featureArray));
         }
         
         objectMapper.writeValue(new File(savePath), jsonNode); 
@@ -86,24 +89,5 @@ public class FaceListService {
         }
 
         return featureMap;
-    }
-    public static void main(String[] args) throws IOException {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        String folderPath = "spring-demo-ai/images/facelist/";
-        FaceListService frc = new FaceListService();
-
-        // frc.createFaceList("faceList.json", folderPath, 
-        //     "spring-demo-ai/weights/acedetection/face_detection_yunet_2023mar.onnx",
-        //     "spring-demo-ai/weights/facerecognition/face_recognition_sface_2021dec_int8.onnx");
-
-        Map<String, Mat> featureMap = frc.readFaceList("faceList.json");
-        FaceSystemService fss = new FaceSystemService("spring-demo-ai/images/facelist/madonna/madonna7.jpg", 
-                                                    "spring-demo-ai/weights/facedetection/face_detection_yunet.onnx",
-                                                    "spring-demo-ai/weights/facerecognition/face_recognition_sface.onnx");
-        fss.faceDetection();
-        fss.faceEmbedding();
-        fss.faceRecognition(featureMap);
-        System.err.println(fss.getFeatureMap());
-        fss.visualize();
     }
 }
