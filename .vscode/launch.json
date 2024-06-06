@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FaceRecognitionController",
+            "request": "launch",
+            "mainClass": "com.example.spring_demo_ai.controllers.FaceRecognitionController",
+            "projectName": "spring-demo-ai"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
