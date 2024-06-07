@@ -3,6 +3,8 @@ package com.example.spring_demo_ai.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.spring_demo_ai.utils.ImageUtils;
+
 import java.util.Random;
 
 import org.opencv.core.Core;
@@ -55,7 +57,7 @@ public class FaceDetectionController {
 
             // Generate random file name
             String outputDirectory = "spring-demo-ai/images/output/";
-            String outputFileName = generateRandomFileName() + ".jpg";
+            String outputFileName = ImageUtils.generateRandomFileName(20) + ".jpg";
             String outputPath = outputDirectory + outputFileName;
 
             // Export decoded image to file
@@ -67,17 +69,4 @@ public class FaceDetectionController {
         }
 
     }
-
-    private String generateRandomFileName() {
-        int length = 10;
-        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            int index = random.nextInt(characters.length());
-            sb.append(characters.charAt(index));
-        }
-        return sb.toString();
-    }
-
 }

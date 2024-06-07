@@ -94,9 +94,6 @@ public class FaceSystemService {
 
     public void faceRecognition(Map<String, Mat> featureList) {
         for(Mat feature:this.faceFeature){
-            // System.err.println(feature.row(0).get(0, 2)[0]);
-            // System.err.println(feature.row(0).get(0, 20)[0]);
-            // System.err.println(feature.row(0).get(0, 126)[0]);
             Mat feature_current = feature.clone();
             double tmpCosScore = 0.363;
             Map<String, Double> cosScoreMap = Map.of("Guess", 1.0);
@@ -114,9 +111,9 @@ public class FaceSystemService {
     }
 
     public void visualize() {
-        for(int i = 0; i < featureMap.size(); i++) {
-            for(String name:featureMap.get(i).keySet()){
-                double score = (double)(Math.round(featureMap.get(i).get(name)*100))/100;
+        for(int i = 0; i < this.featureMap.size(); i++) {
+            for(String name:this.featureMap.get(i).keySet()){
+                double score = (double)(Math.round(this.featureMap.get(i).get(name)*100))/100;
                 String text = name + ": " + score;
                 double position_x = this.bboxes.get(i).tl().x - 10;
                 double position_y = this.bboxes.get(i).tl().y - 10;

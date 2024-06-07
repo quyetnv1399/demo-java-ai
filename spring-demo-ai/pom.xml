@@ -58,7 +58,7 @@
 			<artifactId>opencv</artifactId>
 			<version>4.9.0</version>
 			<scope>system</scope>
-			<systemPath>D:\opencv2\build\java\opencv-490.jar</systemPath>
+			<systemPath>C:/Users/Admin/Downloads/opencv/build/java/opencv-490.jar</systemPath>
 		</dependency>
 
 		<dependency>
