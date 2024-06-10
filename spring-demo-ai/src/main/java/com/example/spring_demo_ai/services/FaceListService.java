@@ -1,6 +1,8 @@
 package com.example.spring_demo_ai.services;
 
 import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -12,7 +14,7 @@ import java.io.*;
 import java.util.*;
 import java.text.DecimalFormat;
 
-// @RestController
+@Service
 public class FaceListService {
     public void createFaceList(String savePath, String folderPath, String detectModelPath, String recognModelPath) 
                 throws StreamWriteException, DatabindException, IOException {
@@ -25,8 +27,8 @@ public class FaceListService {
             List<List<Double>> listFeature = new ArrayList<List<Double>>();
 
             for(File image:listImage) {
-                FaceSystemService fss = new FaceSystemService(image.getAbsolutePath(), 
-                                                            detectModelPath, recognModelPath);
+                Mat imageAbsolute = Imgcodecs.imread(image.getAbsolutePath());
+                FaceSystemService fss = new FaceSystemService(imageAbsolute, detectModelPath, recognModelPath);
                 fss.faceDetection();
                 fss.faceEmbedding();
                 List<Mat> faceFeature = fss.getFaceFeature();

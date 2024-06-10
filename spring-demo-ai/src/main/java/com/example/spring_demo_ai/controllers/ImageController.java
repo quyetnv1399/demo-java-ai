@@ -3,19 +3,13 @@ package com.example.spring_demo_ai.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.spring_demo_ai.dto.ImageDto;
 import com.example.spring_demo_ai.models.Image;
 import com.example.spring_demo_ai.services.ImageService;
 import com.example.spring_demo_ai.utils.ImageUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -61,6 +55,29 @@ public class ImageController {
         }
     }
 
+    @PostMapping("/image/recognize-face")
+    public ResponseEntity<byte[]> recognizeFace(@RequestParam("file") MultipartFile file) throws IOException {
+        try {
+            // Convert MultipartFile to Mat
+            Path tempFile = Files.createTempFile(null, null);
+            Files.write(tempFile, file.getBytes());
+            Mat image = Imgcodecs.imread(tempFile.toString());
+            Files.delete(tempFile);
+
+            if (image.empty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+
+            // Xử lý logic
+            byte[] imageData = imageService.recognizeFace(image);
+
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(404).build();
+        }
+    }
+
     @PostMapping("/analyze-image")
     public ResponseEntity<byte[]> analyzeImage(@RequestParam("file") MultipartFile file) {
 
@@ -80,8 +97,8 @@ public class ImageController {
             byte[] imageByteArray = matOfByte.toArray();
 
             // Get image size
-            int width = imageMat.cols();
-            int height = imageMat.rows();
+            // int width = imageMat.cols();
+            // int height = imageMat.rows();
 
             // Decode byte array back to image
             Mat decodedImage = Imgcodecs.imdecode(new MatOfByte(imageByteArray), Imgcodecs.IMREAD_COLOR);

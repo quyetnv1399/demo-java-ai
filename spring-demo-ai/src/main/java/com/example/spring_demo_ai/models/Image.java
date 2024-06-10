@@ -19,19 +19,22 @@ public class Image {
 
     private String name;
     private String type;
+    private String recognizeName;
 
     @Column(name = "minioUrl", length = 1000)
     private String minioUrl;
-    @Column(name = "embedVector", length = 1000)
+    
+    @Column(name = "embedVector", columnDefinition = "jsonb")
     private String embedVector; 
 
     public Image(){
 
     }
 
-    public Image(String name, String type, String minioUrl, String embedVector) {
+    public Image(String name, String type, String recognizeName, String minioUrl, String embedVector) {
         this.name = name;
         this.type = type;
+        this.recognizeName = recognizeName;
         this.minioUrl = minioUrl;
         this.embedVector = embedVector;
     }
@@ -56,6 +59,14 @@ public class Image {
         this.type = type;
     }
 
+    public String getRecognizeName() {
+        return recognizeName;
+    }
+
+    public void setRecognizeName(String recognizeName) {
+        this.recognizeName = recognizeName;
+    }
+
     public String getMinioUrl() {
         return minioUrl;
     }
@@ -71,6 +82,5 @@ public class Image {
     public void setEmbedVector(String embedVector) {
         this.embedVector = embedVector;
     }
-    
 
 }

@@ -18,8 +18,8 @@ public class FaceSystemService {
     private List<Mat> faceFeature;
     private List<Map<String, Double>> featureMap;
 
-    public FaceSystemService(String inputImagePath, String detectModelPath, String recognModelPath) {
-        this.inputImage = Imgcodecs.imread(inputImagePath);
+    public FaceSystemService(Mat inputImagePath, String detectModelPath, String recognModelPath) {
+        this.inputImage = inputImagePath;
         if (this.inputImage.empty()) {
             System.out.println("Can not read img.");
         }
@@ -124,5 +124,18 @@ public class FaceSystemService {
         HighGui.imshow("img", this.imageRectangle);
         HighGui.resizeWindow("img", 600, 600);
         HighGui.waitKey();
+    }
+
+    public void visualize2() {
+        for(int i = 0; i < this.featureMap.size(); i++) {
+            for(String name:this.featureMap.get(i).keySet()){
+                double score = (double)(Math.round(this.featureMap.get(i).get(name)*100))/100;
+                String text = name + ": " + score;
+                double position_x = this.bboxes.get(i).tl().x - 10;
+                double position_y = this.bboxes.get(i).tl().y - 10;
+                Imgproc.putText(this.imageRectangle, text, new Point(position_x, position_y), 
+                                Imgproc.FONT_ITALIC, 0.4, new Scalar(0, 0, 255), 1); 
+            }
+        }
     }
 }

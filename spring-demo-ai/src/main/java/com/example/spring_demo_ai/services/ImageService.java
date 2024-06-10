@@ -1,11 +1,14 @@
 package com.example.spring_demo_ai.services;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.opencv.core.Core;
 import org.opencv.core.Core.MinMaxLocResult;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfRect;
@@ -27,6 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.spring_demo_ai.models.Image;
 import com.example.spring_demo_ai.repositories.ImageRepository;
 import com.example.spring_demo_ai.utils.ImageUtils;
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
 
 import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
@@ -43,11 +48,15 @@ public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private FaceListService faceListService;
+
     @Value("${minio.bucket-name}")
     private String bucketName;
 
-    public ImageService(ImageRepository imageRepository) {
+    public ImageService(ImageRepository imageRepository, FaceListService faceListService) {
         this.imageRepository = imageRepository;
+        this.faceListService = faceListService;
     }
 
     public byte[] getImage(String id) throws Exception {
@@ -59,6 +68,26 @@ public class ImageService {
                         .object(image.getName())
                         .build());
         return stream.readAllBytes();
+    }
+
+    public byte[] recognizeFace(Mat image) throws StreamWriteException, DatabindException, IOException{
+        Map<String, Mat> featureMap = faceListService.readFaceList("faceList.json");
+
+        FaceSystemService fss = new FaceSystemService(image, 
+        "data/weights/facedetection/face_detection_yunet.onnx",
+        "data/weights/facerecognition/face_recognition_sface.onnx");
+
+        fss.faceDetection();
+        fss.faceEmbedding();
+        fss.faceRecognition(featureMap);
+        fss.visualize2();
+
+        MatOfByte matOfByte = new MatOfByte();
+        Imgcodecs.imencode(".jpg", fss.getImageRectangle(), matOfByte);
+
+        byte[] imageBytes = matOfByte.toArray();
+
+        return imageBytes;
     }
 
     public Image saveImage(MultipartFile file) throws Exception {
