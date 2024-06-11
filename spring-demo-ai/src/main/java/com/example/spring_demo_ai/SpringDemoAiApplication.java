@@ -17,14 +17,14 @@ import com.fasterxml.jackson.databind.DatabindException;
 public class SpringDemoAiApplication {
 	public static void main(String[] args) throws StreamWriteException, DatabindException, IOException {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        // String folderPath = "spring-demo-ai/images/facelist/";
-        // FaceListService frc = new FaceListService();
+        // String folderPath = "images/facelist/";
+        FaceListService frc = new FaceListService();
 
         // frc.createFaceList("faceList.json", folderPath, 
-        //     "spring-demo-ai/weights/facedetection/face_detection_yunet.onnx",
-        //     "spring-demo-ai/weights/facerecognition/face_recognition_sface.onnx");
+        //     "data/weights/facedetection/face_detection_yunet.onnx",
+        //     "data/weights/facerecognition/face_recognition_sface.onnx");
 
-        // Map<String, Mat> featureMap = frc.readFaceList("faceList.json");
+        // Map<String, Mat> featureMap = frc.readFaceList("faceList.json");,
         // FaceSystemService fss = new FaceSystemService("spring-demo-ai/images/facelist/madonna/madonna7.jpg", 
         //                                             "spring-demo-ai/weights/facedetection/face_detection_yunet.onnx",
         //                                             "spring-demo-ai/weights/facerecognition/face_recognition_sface.onnx");
@@ -33,6 +33,11 @@ public class SpringDemoAiApplication {
         // fss.faceRecognition(featureMap);
         // System.err.println(fss.getFeatureMap());
         // fss.visualize();
+
+        // try {
+        //     frc.createFaceList2("data/weights/facedetection/face_detection_yunet.onnx", "data/weights/facerecognition/face_recognition_sface.onnx");
+        // } catch (Exception e) {
+        // }
 		SpringApplication.run(SpringDemoAiApplication.class, args);
 	}
 }
